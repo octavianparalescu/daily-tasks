@@ -6,5 +6,7 @@ namespace DailyTasks\Framework\DI\TestClasses;
 
 class TestClassNoTypeHint
 {
-    public function __construct($noTypeHint){}
+    public function __construct($noTypeHint)
+    {
+    }
 }

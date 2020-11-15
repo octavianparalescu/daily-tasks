@@ -6,6 +6,7 @@ namespace DailyTasks\Framework\Config\Converter;
 
 use DailyTasks\Framework\Config\Exception;
 use M1\Env\Parser;
+use Throwable;
 
 class EnvFileToArrayConverter
 {
@@ -39,7 +40,7 @@ class EnvFileToArrayConverter
     {
         try {
             $result = Parser::parse($fileContents);
-        } catch (\Throwable $exception) {
+        } catch (Throwable $exception) {
             throw new Exception("Env file parsing exception: " . $exception->getMessage(), 0, $exception);
         }
 

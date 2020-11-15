@@ -6,5 +6,7 @@ namespace DailyTasks\Framework\DI\TestClasses;
 
 class TestClassDependsOnCircularDependency
 {
-    public function __construct(TestClassCircular1 $circular1){}
+    public function __construct(TestClassCircular1 $circular1)
+    {
+    }
 }

@@ -4,7 +4,8 @@ declare(strict_types=1);
 namespace DailyTasks\Framework\DI;
 
 
-use ReflectionParameter;
+use ReflectionClass;
+use ReflectionException;
 
 class Resolver
 {
@@ -27,7 +28,6 @@ class Resolver
      */
     public function resolve(string $className, array $previousDependencies = []): object
     {
-
         $object = $this->container->get($className);
 
         if ($object !== null) {
@@ -41,8 +41,8 @@ class Resolver
         }
 
         try {
-            $class = new \ReflectionClass($className);
-        } catch (\ReflectionException $exception) {
+            $class = new ReflectionClass($className);
+        } catch (ReflectionException $exception) {
             throw new Exception(
                 'Class ' . $className . ' not found. Graph: ' . $this->getDependencyGraph($previousDependencies), 0, $exception
             );
@@ -75,9 +75,12 @@ class Resolver
                     } else {
                         $dependency = $this->container->get($parameterClass->getName());
                         if (!$dependency) {
-                            $dependency = $this->resolve($parameterClass->getName(), array_merge($previousDependencies, [$className]));
+                            $dependency = $this->resolve(
+                                $parameterClass->getName(),
+                                array_merge($previousDependencies, [$className])
+                            );
                         }
-                        $dependencies []= $dependency;
+                        $dependencies [] = $dependency;
                     }
                 }
 

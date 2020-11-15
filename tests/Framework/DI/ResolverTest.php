@@ -10,14 +10,14 @@ use DailyTasks\Framework\DI\TestClasses\TestClassOneLevelDependency;
 use DailyTasks\Framework\DI\TestClasses\TestClassTwoLevelsDependencies;
 use DailyTasks\Framework\DI\TestClasses\TestInterface;
 use PHPUnit\Framework\TestCase;
+use stdClass;
+use Throwable;
 
 class ResolverTest extends TestCase
 {
-
-
     public function testShouldReturnDirectlyIfInContainer()
     {
-        $className = \stdClass::class;
+        $className = stdClass::class;
         $object = new $className();
         $container = new Container([$className => $object]);
         $resolver = new Resolver($container);
@@ -32,7 +32,7 @@ class ResolverTest extends TestCase
         try {
             $resolver->resolve('test_class_should_not_exist');
             $this->fail();
-        } catch (\Throwable $exception) {
+        } catch (Throwable $exception) {
             $this->assertInstanceOf(Exception::class, $exception);
             $this->assertStringContainsString('not found', $exception->getMessage());
         }
@@ -45,7 +45,7 @@ class ResolverTest extends TestCase
         try {
             $resolver->resolve(TestInterface::class);
             $this->fail();
-        } catch (\Throwable $exception) {
+        } catch (Throwable $exception) {
             $this->assertInstanceOf(Exception::class, $exception);
             $this->assertStringContainsString('instantiable', $exception->getMessage());
         }
@@ -104,7 +104,7 @@ class ResolverTest extends TestCase
         try {
             $resolver->resolve(TestClassCircular1::class);
             $this->fail();
-        } catch (\Throwable $exception) {
+        } catch (Throwable $exception) {
             $this->assertInstanceOf(Exception::class, $exception);
             $this->assertStringContainsString('circular', $exception->getMessage());
         }
@@ -117,7 +117,7 @@ class ResolverTest extends TestCase
         try {
             $resolver->resolve(TestClassNoTypeHint::class);
             $this->fail();
-        } catch (\Throwable $exception) {
+        } catch (Throwable $exception) {
             $this->assertInstanceOf(Exception::class, $exception);
             $this->assertStringContainsString('type-hinted', $exception->getMessage());
         }
@@ -130,7 +130,7 @@ class ResolverTest extends TestCase
         try {
             $resolver->resolve(TestClassCircular1::class);
             $this->fail();
-        } catch (\Throwable $exception) {
+        } catch (Throwable $exception) {
             $this->assertInstanceOf(Exception::class, $exception);
             $this->assertStringContainsString('circular', $exception->getMessage());
         }

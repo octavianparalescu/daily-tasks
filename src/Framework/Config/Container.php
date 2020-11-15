@@ -4,8 +4,6 @@ declare(strict_types=1);
 namespace DailyTasks\Framework\Config;
 
 
-use DailyTasks\Framework\Config\Converter\ComposedFieldNameConverter as Converter;
-
 /**
  * Class Container
  * @package DailyTasks\Framework\Config

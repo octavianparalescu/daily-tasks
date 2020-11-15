@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace DailyTasks\Framework\Config;
 
 
-use DailyTasks\Framework\Config\Converter\ComposedFieldNameConverter;
 use DailyTasks\Framework\Config\Converter\EnvArrayToConfigurationConverter;
 use DailyTasks\Framework\Config\Converter\EnvFileToArrayConverter;
 use DailyTasks\Framework\Config\Converter\FolderToConfigurationConverter;
