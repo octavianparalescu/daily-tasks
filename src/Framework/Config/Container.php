@@ -22,9 +22,6 @@ class Container
 
     /**
      * Gets a config value.
-     * Field name examples:
-     * MYSQL -> returns an array if the config file is defined with a MYSQL array or the single value called MYSQL
-     * MYSQL_HOSTNAME -> returns the single value HOSTNAME from the array MYSQL
      *
      * @param string $fieldName
      *

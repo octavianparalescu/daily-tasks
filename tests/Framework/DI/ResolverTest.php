@@ -14,6 +14,11 @@ use PHPUnit\Framework\TestCase;
 use stdClass;
 use Throwable;
 
+/**
+ * Class ResolverTest
+ * Can't use anonymous classes for testing as the DI Resolver relies on actual classes atm
+ * @package DailyTasks\Framework\DI
+ */
 class ResolverTest extends TestCase
 {
     public function testShouldReturnDirectlyIfInContainer()
