@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace DailyTasks\Framework\DI;
 
 use DailyTasks\Framework\DI\TestClasses\TestClassCircular1;
+use DailyTasks\Framework\DI\TestClasses\TestClassExceptionInConstructor;
 use DailyTasks\Framework\DI\TestClasses\TestClassNoConstructor;
 use DailyTasks\Framework\DI\TestClasses\TestClassNoTypeHint;
 use DailyTasks\Framework\DI\TestClasses\TestClassOneLevelDependency;
@@ -133,6 +134,19 @@ class ResolverTest extends TestCase
         } catch (Throwable $exception) {
             $this->assertInstanceOf(Exception::class, $exception);
             $this->assertStringContainsString('circular', $exception->getMessage());
+        }
+    }
+
+    public function testShouldThrowIfConstructorThrows()
+    {
+        $container = new Container();
+        $resolver = new Resolver($container);
+        try {
+            $resolver->resolve(TestClassExceptionInConstructor::class);
+            $this->fail();
+        } catch (Throwable $exception) {
+            $this->assertInstanceOf(Exception::class, $exception);
+            $this->assertStringContainsString('whilst initializing', $exception->getMessage());
         }
     }
 }

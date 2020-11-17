@@ -5,11 +5,12 @@ namespace DailyTasks\Framework\Config\Converter;
 
 use DailyTasks\Framework\Config\Exception;
 use PHPUnit\Framework\TestCase;
+use Throwable;
 
 class FolderToConfigurationConverterTest extends TestCase
 {
-    private const TEST_FOLDER = __DIR__ . DIRECTORY_SEPARATOR . 'folder_to_cfg_files' . DIRECTORY_SEPARATOR . 'test_folder';
-    private const TEST_FOLDER_BAD = __DIR__ . DIRECTORY_SEPARATOR . 'folder_to_cfg_files' . DIRECTORY_SEPARATOR . 'test_folder_bad';
+    private const TEST_FOLDER = __DIR__ . '/folder_to_cfg_files' . DIRECTORY_SEPARATOR . 'test_folder';
+    private const TEST_FOLDER_BAD = __DIR__ . '/folder_to_cfg_files' . DIRECTORY_SEPARATOR . 'test_folder_bad';
 
     public function testConvertFromFolder()
     {
@@ -34,7 +35,7 @@ class FolderToConfigurationConverterTest extends TestCase
         try {
             $folderConverter->convertFromFolder(self::TEST_FOLDER_BAD);
             $this->fail();
-        } catch (\Throwable $exception) {
+        } catch (Throwable $exception) {
             $this->assertInstanceOf(Exception::class, $exception);
         }
     }
@@ -45,7 +46,7 @@ class FolderToConfigurationConverterTest extends TestCase
         try {
             $folderConverter->convertFromFolder('does_not_exist');
             $this->fail();
-        } catch (\Throwable $exception) {
+        } catch (Throwable $exception) {
             $this->assertInstanceOf(Exception::class, $exception);
         }
     }

@@ -10,21 +10,41 @@ use DailyTasks\Framework\Config\Converter\FolderToConfigurationConverter;
 
 class ContainerFactory
 {
-    public static function create(
+    /**
+     * @var FolderToConfigurationConverter
+     */
+    private FolderToConfigurationConverter $folderConverter;
+    /**
+     * @var EnvFileToArrayConverter
+     */
+    private EnvFileToArrayConverter $envConverter;
+    /**
+     * @var EnvArrayToConfigurationConverter
+     */
+    private EnvArrayToConfigurationConverter $envArrayToConfigurationConverter;
+
+    public function __construct(
         FolderToConfigurationConverter $folderConverter,
         EnvFileToArrayConverter $envConverter,
-        EnvArrayToConfigurationConverter $envArrayToConfigurationConverter,
+        EnvArrayToConfigurationConverter $envArrayToConfigurationConverter
+    ) {
+        $this->folderConverter = $folderConverter;
+        $this->envConverter = $envConverter;
+        $this->envArrayToConfigurationConverter = $envArrayToConfigurationConverter;
+    }
+
+    public function create(
         ?string $defaultConfigFolderPath = null,
         ?string $envFilePath = null
     ) {
         $defaultConfig = [];
         if ($defaultConfigFolderPath) {
-            $defaultConfig = $folderConverter->convertFromFolder($defaultConfigFolderPath);
+            $defaultConfig = $this->folderConverter->convertFromFolder($defaultConfigFolderPath);
         }
         $envConfiguration = [];
         if (is_readable($envFilePath)) {
-            $envArray = $envConverter->convertFile($envFilePath);
-            $envConfiguration = $envArrayToConfigurationConverter->convertArrayToConfiguration($envArray);
+            $envArray = $this->envConverter->convertFile($envFilePath);
+            $envConfiguration = $this->envArrayToConfigurationConverter->convertArrayToConfiguration($envArray);
         }
 
         return new Container($envConfiguration, $defaultConfig);

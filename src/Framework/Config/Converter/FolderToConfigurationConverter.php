@@ -19,7 +19,7 @@ class FolderToConfigurationConverter
         $mergedConfig = [];
         $directoryContentsWithoutDots = array_diff(scandir($folderPath), ['..', '.']);
         foreach ($directoryContentsWithoutDots as $fileName) {
-            $filePath = $folderPath . DIRECTORY_SEPARATOR . $fileName;
+            $filePath = $folderPath . '/' . $fileName;
             if (!is_readable($filePath)) {
                 throw new Exception(
                     "Default config file is not accessible: $filePath."
