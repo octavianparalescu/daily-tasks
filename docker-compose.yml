@@ -1,0 +1,20 @@
+version: "3.8"
+services:
+  composer:
+    image: library/composer:2.0
+    environment:
+      - COMPOSER_CACHE_DIR=/data/composer_cache_dir
+    volumes:
+      - .:/app
+    restart: never
+  test:
+    build:
+      context: ./docker/test
+      args:
+        - PHP_VERSION=${PHP_VERSION}
+    volumes:
+      - .:/project
+      - ./data/test_logs:/logs
+    working_dir: /project
+    entrypoint: vendor/bin/phpunit
+    restart: never

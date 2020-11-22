@@ -1,3 +1,6 @@
 vendor
+data/composer-cache-dir
+data/test_logs
 .idea
 .phpunit.result.cache
+.env

@@ -10,7 +10,9 @@
     ],
     "require": {
         "php": ">=7.4",
-        "m1/env": "^2.2"
+        "m1/env": "^2.2",
+        "ext-json": "*",
+        "pda/pheanstalk": "^4.0"
     },
     "autoload": {
         "psr-4": {
