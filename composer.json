@@ -12,7 +12,8 @@
         "php": ">=7.4",
         "m1/env": "^2.2",
         "ext-json": "*",
-        "pda/pheanstalk": "^4.0"
+        "pda/pheanstalk": "^4.0",
+        "symfony/http-foundation": "^5.1"
     },
     "autoload": {
         "psr-4": {

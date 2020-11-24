@@ -16,7 +16,11 @@ abstract class MapEntity implements Countable, IteratorAggregate, JsonSerializab
 
     public function __construct(array $initialData = [])
     {
-        $this->data = $initialData;
+        $this->data = [];
+        /** @var Identifiable $datum */
+        foreach ($initialData as $datum) {
+            $this->add($datum);
+        }
     }
 
     /**

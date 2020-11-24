@@ -10,7 +10,7 @@ class KernelTest extends TestCase
     public function testStart()
     {
         $app = new Kernel();
-        $app->start();
+        $app->run();
         $this->addToAssertionCount(1);
     }
 }

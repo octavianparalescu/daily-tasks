@@ -9,7 +9,7 @@ namespace DailyTasks\Framework\Config;
  * @package DailyTasks\Framework\Config
  * @psalm-immutable
  */
-class Container
+class ConfigContainer
 {
     private array $defaultConfig;
     private array $envConfig;
@@ -40,8 +40,7 @@ class Container
     /**
      * @param string $fieldName
      *
-     * @return mixed
-     * @throws Exception
+     * @return mixed|null
      */
     private function getEnvValueOrDefaultValue(string $fieldName)
     {
@@ -50,7 +49,7 @@ class Container
         } elseif (isset($this->defaultConfig[$fieldName])) {
             return $this->defaultConfig[$fieldName];
         } else {
-            throw new Exception("Could not find config item with name $fieldName.");
+            return null;
         }
     }
 }

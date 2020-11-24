@@ -8,7 +8,7 @@ use DailyTasks\Framework\Config\Converter\EnvArrayToConfigurationConverter;
 use DailyTasks\Framework\Config\Converter\EnvFileToArrayConverter;
 use DailyTasks\Framework\Config\Converter\FolderToConfigurationConverter;
 
-class ContainerFactory
+class ConfigContainerFactory
 {
     /**
      * @var FolderToConfigurationConverter
@@ -33,10 +33,17 @@ class ContainerFactory
         $this->envArrayToConfigurationConverter = $envArrayToConfigurationConverter;
     }
 
+    /**
+     * @param string|null $defaultConfigFolderPath
+     * @param string|null $envFilePath
+     *
+     * @return ConfigContainer
+     * @throws Exception
+     */
     public function create(
         ?string $defaultConfigFolderPath = null,
         ?string $envFilePath = null
-    ) {
+    ): ConfigContainer {
         $defaultConfig = [];
         if ($defaultConfigFolderPath) {
             $defaultConfig = $this->folderConverter->convertFromFolder($defaultConfigFolderPath);
@@ -47,6 +54,6 @@ class ContainerFactory
             $envConfiguration = $this->envArrayToConfigurationConverter->convertArrayToConfiguration($envArray);
         }
 
-        return new Container($envConfiguration, $defaultConfig);
+        return new ConfigContainer($envConfiguration, $defaultConfig);
     }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace DailyTasks\Framework\DI;
 
 
+use DailyTasks\Framework\DI\Contract\ServiceFactoryInterface;
 use ReflectionClass;
 use ReflectionException;
 use Throwable;
@@ -14,6 +15,7 @@ class Resolver
      * @var Container
      */
     private Container $container;
+    private array $rules = [];
 
     public function __construct(Container $container)
     {
@@ -29,10 +31,18 @@ class Resolver
      */
     public function resolve(string $className, array $previousDependencies = []): object
     {
+        if ($className === get_class($this)) {
+            return $this;
+        }
+
         $object = $this->container->get($className);
 
         if ($object !== null) {
             return $object;
+        }
+
+        if ($staticReplacement = $this->getStaticReplacement($className)) {
+            $className = $staticReplacement;
         }
 
         if (in_array($className, $previousDependencies)) {
@@ -41,51 +51,58 @@ class Resolver
             );
         }
 
-        try {
-            $class = new ReflectionClass($className);
-        } catch (ReflectionException $exception) {
-            throw new Exception(
-                'Class ' . $className . ' not found. ' . $this->getDependencyGraph($previousDependencies), 0, $exception
-            );
-        }
+        if ($factoryClass = $this->getFactory($className)) {
+            /** @var ServiceFactoryInterface $factory */
+            $factory = $this->resolve($factoryClass, array_merge($previousDependencies, [$className]));
 
-        if (!$class->isInstantiable()) {
-            throw new Exception(
-                'Class ' . $className . ' is not instantiable. ' . $this->getDependencyGraph($previousDependencies)
-            );
-        }
-
-        $constructor = $class->getConstructor();
-        if ($constructor === null) {
-            // There are no parameters (no constructor), resolving is final
-            $object = $this->initializeObject($className, [], $previousDependencies);
+            $object = $factory->createInstance();
         } else {
-            $parameters = $constructor->getParameters();
-            if (empty($parameters)) {
-                // There are no parameters (constructor with no parameters), resolving is final
+            try {
+                $class = new ReflectionClass($className);
+            } catch (ReflectionException $exception) {
+                throw new Exception(
+                    'Class ' . $className . ' not found. ' . $this->getDependencyGraph($previousDependencies), 0, $exception
+                );
+            }
+
+            if (!$class->isInstantiable()) {
+                throw new Exception(
+                    'Class ' . $className . ' is not instantiable. ' . $this->getDependencyGraph($previousDependencies)
+                );
+            }
+
+            $constructor = $class->getConstructor();
+            if ($constructor === null) {
+                // There are no parameters (no constructor), resolving is final
                 $object = $this->initializeObject($className, [], $previousDependencies);
             } else {
-                $dependencies = [];
-                foreach ($parameters as $parameter) {
-                    $parameterClass = $parameter->getClass();
-                    if ($parameterClass === null) {
-                        throw new Exception(
-                            'Class ' . $className . ' is not instantiable, parameter ' . $parameter->getName(
-                            ) . ' doesn\'t have a type-hinted class. ' . $this->getDependencyGraph($previousDependencies)
-                        );
-                    } else {
-                        $dependency = $this->container->get($parameterClass->getName());
-                        if (!$dependency) {
-                            $dependency = $this->resolve(
-                                $parameterClass->getName(),
-                                array_merge($previousDependencies, [$className])
+                $parameters = $constructor->getParameters();
+                if (empty($parameters)) {
+                    // There are no parameters (constructor with no parameters), resolving is final
+                    $object = $this->initializeObject($className, [], $previousDependencies);
+                } else {
+                    $dependencies = [];
+                    foreach ($parameters as $parameter) {
+                        $parameterClass = $parameter->getClass();
+                        if ($parameterClass === null) {
+                            throw new Exception(
+                                'Class ' . $className . ' is not instantiable, parameter ' . $parameter->getName(
+                                ) . ' doesn\'t have a type-hinted class. ' . $this->getDependencyGraph($previousDependencies)
                             );
+                        } else {
+                            $dependency = $this->container->get($parameterClass->getName());
+                            if (!$dependency) {
+                                $dependency = $this->resolve(
+                                    $parameterClass->getName(),
+                                    array_merge($previousDependencies, [$className])
+                                );
+                            }
+                            $dependencies [] = $dependency;
                         }
-                        $dependencies [] = $dependency;
                     }
-                }
 
-                $object = $this->initializeObject($className, $dependencies, $previousDependencies);
+                    $object = $this->initializeObject($className, $dependencies, $previousDependencies);
+                }
             }
         }
 
@@ -135,5 +152,35 @@ class Resolver
                 ), 0, $exception
             );
         }
+    }
+
+    private function getStaticReplacement(string $className)
+    {
+        if (isset($this->rules['static']) && isset($this->rules['static'][$className])) {
+            return $this->rules['static'][$className];
+        }
+
+        return false;
+    }
+
+    /**
+     * @param array $rules
+     */
+    public function setRules(array $rules): void
+    {
+        $this->rules = $rules;
+    }
+
+    private function getFactory(string $className)
+    {
+        if (isset($this->rules['factory']) && isset($this->rules['factory'][$className])) {
+            return $this->rules['factory'][$className];
+        }
+
+        if (class_exists($className . 'Factory')) {
+            return $className . 'Factory';
+        }
+
+        return false;
     }
 }

@@ -4,7 +4,8 @@ declare(strict_types=1);
 namespace DailyTasks\Framework\Application;
 
 
-use DailyTasks\Framework\Config\ContainerFactory;
+use DailyTasks\Framework\Config\ConfigContainer;
+use DailyTasks\Framework\Config\ConfigContainerFactory;
 use DailyTasks\Framework\DI\Container;
 use DailyTasks\Framework\DI\Resolver;
 
@@ -13,25 +14,40 @@ class Kernel
     private Resolver $resolver;
     private ?string $envFilePath;
     private ?string $defaultConfigsFolderPath;
+    private ?string $medium;
 
     public function __construct(
+        ?string $medium = 'web',
         ?string $envFilePath = ROOT_PATH . '/.env',
         ?string $defaultConfigsFolderPath = ROOT_PATH . '/config'
     ) {
-        $this->resolver = new Resolver(new Container());
         $this->envFilePath = $envFilePath;
         $this->defaultConfigsFolderPath = $defaultConfigsFolderPath;
+        $this->medium = $medium;
+        $this->resolver = new Resolver(new Container());
     }
 
-    public function start()
+    public function run()
     {
-        /** @var ContainerFactory $configFactory */
-        $configFactory = $this->resolver->resolve(ContainerFactory::class);
+        /** @var ConfigContainerFactory $configFactory */
+        $configFactory = $this->resolver->resolve(ConfigContainerFactory::class);
         $config = $configFactory->create(
             $this->defaultConfigsFolderPath,
             $this->envFilePath
         );
+
+        if ($config->get('di') !== null) {
+            $this->resolver->setRules($config->get('di'));
+        }
+
         $this->resolver->getContainer()
-                       ->set(\DailyTasks\Framework\Config\Container::class, $config);
+                       ->set(ConfigContainer::class, $config);
+        $this->resolver->getContainer()
+                       ->set(Medium::class, new Medium($this->medium));
+
+        /** @var ActionController $actionController */
+        $actionController = $this->resolver->resolve(ActionController::class);
+
+        return $actionController->execute();
     }
 }
