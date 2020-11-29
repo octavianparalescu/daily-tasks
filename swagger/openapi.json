@@ -1,0 +1,229 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "This server allows you to create and complete daily tasks.",
+        "version": "1.0.0",
+        "title": "Daily-Tasks",
+        "contact": {
+            "email": "me@octav.info"
+        }
+    },
+    "host": "localhost",
+    "tags": [
+        {
+            "name": "task",
+            "description": "A task"
+        }
+    ],
+    "schemes": [
+        "http"
+    ],
+    "paths": {
+        "/task": {
+            "post": {
+                "tags": [
+                    "task"
+                ],
+                "summary": "Add a new pet to the store",
+                "description": "",
+                "operationId": "addTask",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "Task to be created",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/Task"
+                        }
+                    }
+                ],
+                "responses": {
+                    "405": {
+                        "description": "Invalid input"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "task"
+                ],
+                "summary": "Update an existing task",
+                "description": "",
+                "operationId": "updateTask",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "Task object that needs to be updated",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/Task"
+                        }
+                    }
+                ],
+                "responses": {
+                    "400": {
+                        "description": "Invalid ID supplied"
+                    },
+                    "404": {
+                        "description": "Task not found"
+                    },
+                    "405": {
+                        "description": "Validation exception"
+                    }
+                }
+            }
+        },
+        "/task/findByDate": {
+            "get": {
+                "tags": [
+                    "task"
+                ],
+                "summary": "Finds Tasks by their due day",
+                "description": "Not supplying the date will return today's tasks",
+                "operationId": "findTasksByDate",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "date",
+                        "in": "query",
+                        "description": "Date in format YYYY-MM-DD",
+                        "required": false,
+                        "type": "string",
+                        "format": "date"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/Task"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid status value"
+                    }
+                }
+            }
+        },
+        "/task/{taskId}": {
+            "get": {
+                "tags": [
+                    "task"
+                ],
+                "summary": "Find task by ID",
+                "description": "Returns a single task",
+                "operationId": "getTaskById",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "taskId",
+                        "in": "path",
+                        "description": "ID of task to return",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "$ref": "#/definitions/Task"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid ID supplied"
+                    },
+                    "404": {
+                        "description": "Task not found"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "task"
+                ],
+                "summary": "Deletes a task",
+                "description": "",
+                "operationId": "deleteTask",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "taskId",
+                        "in": "path",
+                        "description": "Task id to delete",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                ],
+                "responses": {
+                    "400": {
+                        "description": "Invalid ID supplied"
+                    },
+                    "404": {
+                        "description": "Task not found"
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "Task": {
+            "type": "object",
+            "required": [
+                "title",
+                "date"
+            ],
+            "properties": {
+                "id": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "date": {
+                    "type": "string",
+                    "format": "date"
+                },
+                "title": {
+                    "type": "string",
+                    "example": "Call the phone company"
+                },
+                "description": {
+                    "type": "string",
+                    "example": "Ask them to renew the subscription."
+                },
+                "status": {
+                    "type": "string",
+                    "description": "Task completition status",
+                    "enum": [
+                        "pending",
+                        "completed"
+                    ]
+                }
+            }
+        }
+    }
+}

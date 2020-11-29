@@ -18,3 +18,33 @@ services:
     working_dir: /project
     entrypoint: vendor/bin/phpunit
     restart: never
+  presentation_dev:
+    build:
+      context: ./docker/presentation
+      args:
+        - PHP_VERSION=${PHP_VERSION}
+    volumes:
+      - .:/project
+      - ./data/presentation_logs:/var/log/apache2
+    working_dir: /project
+    ports:
+      - "80:80"
+    restart: always
+    environment:
+      XDEBUG_CONFIG: remote_host=host.docker.internal
+  swagger-editor:
+    image: swaggerapi/swagger-editor:latest
+    ports:
+      - "8081:8080"
+    volumes:
+      - ./swagger/openapi.json:/openapi.json
+    environment:
+      SWAGGER_FILE: /openapi.json
+  swagger-ui:
+    image: swaggerapi/swagger-ui
+    ports:
+      - "8082:8080"
+    volumes:
+      - ./swagger/openapi.json:/openapi.json
+    environment:
+      SWAGGER_JSON: /openapi.json
