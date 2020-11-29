@@ -33,7 +33,7 @@ abstract class MapEntity implements Countable, IteratorAggregate, JsonSerializab
     {
         $entitiesType = $this->getEntitiesType();
         if (!($entity instanceof $entitiesType)) {
-            throw new \Exception('Tried to add ' . (get_class($entity)) . ' to map of type ' . $entitiesType);
+            throw new Exception('Tried to add ' . (get_class($entity)) . ' to map of type ' . $entitiesType);
         }
         $this->data[$this->getKeyString($entity->getKey())] = $entity;
     }

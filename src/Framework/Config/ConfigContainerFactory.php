@@ -4,56 +4,78 @@ declare(strict_types=1);
 namespace DailyTasks\Framework\Config;
 
 
-use DailyTasks\Framework\Config\Converter\EnvArrayToConfigurationConverter;
 use DailyTasks\Framework\Config\Converter\EnvFileToArrayConverter;
-use DailyTasks\Framework\Config\Converter\FolderToConfigurationConverter;
+use DailyTasks\Framework\Config\Converter\FileToConfigurationConverter;
+use DailyTasks\Framework\Domain\Key\DomainKey;
 
 class ConfigContainerFactory
 {
-    /**
-     * @var FolderToConfigurationConverter
-     */
-    private FolderToConfigurationConverter $folderConverter;
     /**
      * @var EnvFileToArrayConverter
      */
     private EnvFileToArrayConverter $envConverter;
     /**
-     * @var EnvArrayToConfigurationConverter
+     * @var FileToConfigurationConverter
      */
-    private EnvArrayToConfigurationConverter $envArrayToConfigurationConverter;
+    private FileToConfigurationConverter $fileToConfigurationConverter;
 
     public function __construct(
-        FolderToConfigurationConverter $folderConverter,
-        EnvFileToArrayConverter $envConverter,
-        EnvArrayToConfigurationConverter $envArrayToConfigurationConverter
+        FileToConfigurationConverter $fileToConfigurationConverter,
+        EnvFileToArrayConverter $envConverter
     ) {
-        $this->folderConverter = $folderConverter;
         $this->envConverter = $envConverter;
-        $this->envArrayToConfigurationConverter = $envArrayToConfigurationConverter;
+        $this->fileToConfigurationConverter = $fileToConfigurationConverter;
     }
 
     /**
+     * @param DomainKey   $domainKey
      * @param string|null $defaultConfigFolderPath
-     * @param string|null $envFilePath
+     * @param string|null $envFolder
      *
      * @return ConfigContainer
      * @throws Exception
      */
     public function create(
-        ?string $defaultConfigFolderPath = null,
-        ?string $envFilePath = null
+        DomainKey $domainKey,
+        string $defaultConfigFolderPath,
+        string $envFolder
     ): ConfigContainer {
+        $configPath = $this->getDefaultConfigFIlePath($defaultConfigFolderPath, $domainKey);
         $defaultConfig = [];
-        if ($defaultConfigFolderPath) {
-            $defaultConfig = $this->folderConverter->convertFromFolder($defaultConfigFolderPath);
-        }
-        $envConfiguration = [];
-        if (is_readable($envFilePath)) {
-            $envArray = $this->envConverter->convertFile($envFilePath);
-            $envConfiguration = $this->envArrayToConfigurationConverter->convertArrayToConfiguration($envArray);
+        if (is_readable($configPath)) {
+            $defaultConfig = $this->fileToConfigurationConverter->convertFromFile($configPath);
         }
 
-        return new ConfigContainer($envConfiguration, $defaultConfig);
+        $envFile = $this->getEnvFileNameFormat($envFolder, $domainKey);
+
+        // We only read the env file if it exists as it is not mandatory
+        $envArray = [];
+        if (is_readable($envFile)) {
+            $envArray = $this->envConverter->convertFile($envFile);
+        }
+
+        return new ConfigContainer($domainKey, $envArray, $defaultConfig);
+    }
+
+    /**
+     * @param string|null $envFolder
+     * @param DomainKey   $domainKey
+     *
+     * @return string
+     */
+    private function getEnvFileNameFormat(?string $envFolder, DomainKey $domainKey): string
+    {
+        return $envFolder . '/.' . $domainKey->getConfigIdentifier() . '.env';
+    }
+
+    /**
+     * @param string|null $defaultConfigFolderPath
+     * @param DomainKey   $domainKey
+     *
+     * @return string
+     */
+    private function getDefaultConfigFIlePath(?string $defaultConfigFolderPath, DomainKey $domainKey): string
+    {
+        return $defaultConfigFolderPath . '/' . $domainKey->getConfigIdentifier() . '.php';
     }
 }

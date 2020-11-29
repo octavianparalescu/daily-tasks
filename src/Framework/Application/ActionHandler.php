@@ -7,15 +7,10 @@ namespace DailyTasks\Framework\Application;
 use DailyTasks\Framework\ADR\Contract\ActionHandlerInterface;
 use DailyTasks\Framework\ADR\Contract\ActionInterface;
 use DailyTasks\Framework\ADR\Router;
-use DailyTasks\Framework\Config\ConfigContainer;
 use DailyTasks\Framework\DI\Resolver;
 
 class ActionHandler
 {
-    /**
-     * @var ConfigContainer
-     */
-    private ConfigContainer $configContainer;
     /**
      * @var Medium
      */
@@ -30,12 +25,10 @@ class ActionHandler
     private Resolver $resolver;
 
     public function __construct(
-        ConfigContainer $configContainer,
         Medium $medium,
         Router $router,
         Resolver $resolver
     ) {
-        $this->configContainer = $configContainer;
         $this->medium = $medium;
         $this->router = $router;
         $this->resolver = $resolver;

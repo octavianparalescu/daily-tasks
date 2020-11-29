@@ -13,15 +13,11 @@ class HTTPRoute implements RouteInterface
      * @var HTTPRouteKey
      */
     private HTTPRouteKey $key;
-    private string $httpVerb;
-    private string $path;
     private string $actionClass;
 
-    public function __construct(HTTPRouteKey $key, string $httpVerb, string $path, string $actionClass)
+    public function __construct(HTTPRouteKey $key, string $actionClass)
     {
         $this->key = $key;
-        $this->httpVerb = $httpVerb;
-        $this->path = $path;
         $this->actionClass = $actionClass;
     }
 
@@ -30,7 +26,8 @@ class HTTPRoute implements RouteInterface
      */
     public function getHttpVerb(): string
     {
-        return $this->httpVerb;
+        return $this->getKey()
+                    ->getHttpVerb();
     }
 
     /**
@@ -38,7 +35,8 @@ class HTTPRoute implements RouteInterface
      */
     public function getPath(): string
     {
-        return $this->path;
+        return $this->getKey()
+                    ->getPath();
     }
 
     /**

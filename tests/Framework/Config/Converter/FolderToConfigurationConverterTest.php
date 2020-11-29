@@ -14,7 +14,7 @@ class FolderToConfigurationConverterTest extends TestCase
 
     public function testConvertFromFolder()
     {
-        $folderConverter = new FolderToConfigurationConverter();
+        $folderConverter = new FolderToConfigurationConverter(new FileToConfigurationConverter());
         $config = $folderConverter->convertFromFolder(self::TEST_FOLDER);
         $this->assertEquals(
             [
@@ -31,7 +31,7 @@ class FolderToConfigurationConverterTest extends TestCase
 
     public function testShouldThrowIfNotArray()
     {
-        $folderConverter = new FolderToConfigurationConverter();
+        $folderConverter = new FolderToConfigurationConverter(new FileToConfigurationConverter());
         try {
             $folderConverter->convertFromFolder(self::TEST_FOLDER_BAD);
             $this->fail();
@@ -42,7 +42,7 @@ class FolderToConfigurationConverterTest extends TestCase
 
     public function testShouldThrowIfNotFolder()
     {
-        $folderConverter = new FolderToConfigurationConverter();
+        $folderConverter = new FolderToConfigurationConverter(new FileToConfigurationConverter());
         try {
             $folderConverter->convertFromFolder('does_not_exist');
             $this->fail();

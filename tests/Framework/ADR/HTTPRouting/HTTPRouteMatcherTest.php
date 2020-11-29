@@ -16,7 +16,7 @@ class HTTPRouteMatcherTest extends TestCase
         $routeString = '/test';
         $verb = Verbs::GET;
 
-        $route = new HTTPRoute(new HTTPRouteKey($verb, $routeString), $verb, $routeString, 'class');
+        $route = new HTTPRoute(new HTTPRouteKey($verb, $routeString), 'class');
         $this->assertIsObject($routeMatcher->match($route, $routeString, $verb));
     }
 
@@ -26,7 +26,7 @@ class HTTPRouteMatcherTest extends TestCase
         $routeString = '/test';
         $verb = Verbs::GET;
 
-        $route = new HTTPRoute(new HTTPRouteKey($verb, $routeString), $verb, $routeString, 'class');
+        $route = new HTTPRoute(new HTTPRouteKey($verb, $routeString), 'class');
         $this->assertNull($routeMatcher->match($route, '/something-else', $verb));
     }
 
@@ -36,7 +36,7 @@ class HTTPRouteMatcherTest extends TestCase
         $routeString = '/test';
         $verb = Verbs::GET;
 
-        $route = new HTTPRoute(new HTTPRouteKey($verb, $routeString), $verb, $routeString, 'class');
+        $route = new HTTPRoute(new HTTPRouteKey($verb, $routeString), 'class');
         $this->assertNull($routeMatcher->match($route, $routeString . '/another-level', $verb));
     }
 
@@ -46,7 +46,7 @@ class HTTPRouteMatcherTest extends TestCase
         $routeString = '/test/[param1]';
         $verb = Verbs::GET;
 
-        $route = new HTTPRoute(new HTTPRouteKey($verb, $routeString), $verb, $routeString, 'class');
+        $route = new HTTPRoute(new HTTPRouteKey($verb, $routeString), 'class');
         $resolvedRoute = $routeMatcher->match($route, '/test/test-param', $verb);
         $this->assertIsObject($resolvedRoute);
         $this->assertEquals(
@@ -62,7 +62,7 @@ class HTTPRouteMatcherTest extends TestCase
         $routeString = '/test/[param1]/[param2]';
         $verb = Verbs::GET;
 
-        $route = new HTTPRoute(new HTTPRouteKey($verb, $routeString), $verb, $routeString, 'class');
+        $route = new HTTPRoute(new HTTPRouteKey($verb, $routeString), 'class');
         $resolvedRoute = $routeMatcher->match($route, '/test/test-param/test-param2', $verb);
         $this->assertIsObject($resolvedRoute);
         $this->assertEquals(
@@ -83,7 +83,7 @@ class HTTPRouteMatcherTest extends TestCase
         $routeString = '/test/[param1]/test2/[param2]';
         $verb = Verbs::GET;
 
-        $route = new HTTPRoute(new HTTPRouteKey($verb, $routeString), $verb, $routeString, 'class');
+        $route = new HTTPRoute(new HTTPRouteKey($verb, $routeString), 'class');
         $resolvedRoute = $routeMatcher->match($route, '/test/test-param/test2/test-param3', $verb);
         $this->assertIsObject($resolvedRoute);
         $this->assertEquals(

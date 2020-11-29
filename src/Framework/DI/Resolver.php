@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace DailyTasks\Framework\DI;
 
 
+use DailyTasks\Framework\Config\ConfigContainer;
 use DailyTasks\Framework\DI\Contract\ServiceFactoryInterface;
 use ReflectionClass;
 use ReflectionException;
@@ -11,11 +12,13 @@ use Throwable;
 
 class Resolver
 {
+    private const CONFIG_FIELD_NAME_STATIC = 'di_static';
+    private const CONFIG_FIELD_NAME_FACTORY = 'di_factory';
     /**
      * @var Container
      */
     private Container $container;
-    private array $rules = [];
+    private ?ConfigContainer $rules = null;
 
     public function __construct(Container $container)
     {
@@ -33,6 +36,10 @@ class Resolver
     {
         if ($className === get_class($this)) {
             return $this;
+        }
+
+        if ($className === get_class($this->container)) {
+            return $this->container;
         }
 
         $object = $this->container->get($className);
@@ -54,6 +61,14 @@ class Resolver
         if ($factoryClass = $this->getFactory($className)) {
             /** @var ServiceFactoryInterface $factory */
             $factory = $this->resolve($factoryClass, array_merge($previousDependencies, [$className]));
+
+            if (!$factory instanceof ServiceFactoryInterface) {
+                throw new Exception(
+                    "Provided factory $factoryClass for $className is not a ServiceFactoryInterface. " . $this->getDependencyGraph(
+                        $previousDependencies
+                    )
+                );
+            }
 
             $object = $factory->createInstance();
         } else {
@@ -83,7 +98,16 @@ class Resolver
                 } else {
                     $dependencies = [];
                     foreach ($parameters as $parameter) {
-                        $parameterClass = $parameter->getClass();
+                        try {
+                            $parameterClass = $parameter->getClass();
+                        } catch (Throwable $exception) {
+                            throw new Exception(
+                                'Class ' . $className . ' is not instantiable, parameter ' . $parameter->getName(
+                                ) . ' doesn\'t have a type-hinted class. ' . $this->getDependencyGraph($previousDependencies),
+                                0,
+                                $exception
+                            );
+                        }
                         if ($parameterClass === null) {
                             throw new Exception(
                                 'Class ' . $className . ' is not instantiable, parameter ' . $parameter->getName(
@@ -156,25 +180,41 @@ class Resolver
 
     private function getStaticReplacement(string $className)
     {
-        if (isset($this->rules['static']) && isset($this->rules['static'][$className])) {
-            return $this->rules['static'][$className];
+        if ($this->rules) {
+            if ($this->rules->getFromEnv($this->getEnvFieldName('static', $className))) {
+                return $this->rules->getFromEnv($this->getEnvFieldName('static', $className));
+            }
+
+            if ($this->rules->get(self::CONFIG_FIELD_NAME_STATIC) && $this->rules->get(
+                    self::CONFIG_FIELD_NAME_STATIC
+                )[$className]) {
+                return $this->rules->get(self::CONFIG_FIELD_NAME_STATIC)[$className];
+            }
         }
 
         return false;
     }
 
     /**
-     * @param array $rules
+     * @param ConfigContainer $rules
      */
-    public function setRules(array $rules): void
+    public function setRules(ConfigContainer $rules): void
     {
         $this->rules = $rules;
     }
 
     private function getFactory(string $className)
     {
-        if (isset($this->rules['factory']) && isset($this->rules['factory'][$className])) {
-            return $this->rules['factory'][$className];
+        if ($this->rules) {
+            if ($this->rules->getFromEnv($this->getEnvFieldName('factory', $className))) {
+                return $this->rules->getFromEnv($this->getEnvFieldName('factory', $className));
+            }
+
+            if ($this->rules->get(self::CONFIG_FIELD_NAME_FACTORY) && $this->rules->get(
+                    self::CONFIG_FIELD_NAME_FACTORY
+                )[$className]) {
+                return $this->rules->get(self::CONFIG_FIELD_NAME_FACTORY)[$className];
+            }
         }
 
         if (class_exists($className . 'Factory')) {
@@ -182,5 +222,18 @@ class Resolver
         }
 
         return false;
+    }
+
+    /**
+     * Example: factory_FrameworkDatabasePersistent
+     *
+     * @param string $type
+     * @param string $className
+     *
+     * @return string
+     */
+    private function getEnvFieldName(string $type, string $className): string
+    {
+        return $type . '_' . str_replace('/', '', $className);
     }
 }

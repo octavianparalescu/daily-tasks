@@ -12,17 +12,33 @@ class HTTPRouteKey implements ComposedKey
     use StringableProperties;
 
     private string $httpVerb;
-    private string $route;
+    private string $path;
 
     /**
      * HTTPRouteKey constructor.
      *
      * @param string $httpVerb
-     * @param string $route
+     * @param string $path
      */
-    public function __construct(string $httpVerb, string $route)
+    public function __construct(string $httpVerb, string $path)
     {
         $this->httpVerb = $httpVerb;
-        $this->route = $route;
+        $this->path = $path;
+    }
+
+    /**
+     * @return string
+     */
+    public function getHttpVerb(): string
+    {
+        return $this->httpVerb;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPath(): string
+    {
+        return $this->path;
     }
 }
