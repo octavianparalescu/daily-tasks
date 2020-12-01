@@ -5,7 +5,7 @@ namespace DailyTasks\Framework\Domain\Key;
 
 
 use DailyTasks\Framework\Data\ComposedKey;
-use DailyTasks\Framework\Data\Traits\StringableProperties;
+use DailyTasks\Framework\Data\StringableProperties;
 
 class DomainKey implements ComposedKey
 {

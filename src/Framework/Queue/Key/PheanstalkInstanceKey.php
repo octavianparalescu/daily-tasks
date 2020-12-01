@@ -5,7 +5,7 @@ namespace DailyTasks\Framework\Queue\Key;
 
 
 use DailyTasks\Framework\Data\ComposedKey;
-use DailyTasks\Framework\Data\Traits\StringableProperties;
+use DailyTasks\Framework\Data\StringableProperties;
 
 class PheanstalkInstanceKey implements ComposedKey
 {

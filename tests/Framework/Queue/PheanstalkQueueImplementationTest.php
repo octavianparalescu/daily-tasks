@@ -8,6 +8,19 @@ use DailyTasks\Framework\Queue\Contract\QueueWorkerInterface;
 use DailyTasks\Framework\Queue\Options\PheanstalkQueueOptions;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * Class PheanstalkQueueImplementationTest
+ * @covers  \DailyTasks\Framework\Queue\PheanstalkQueueImplementation
+ * @uses    \DailyTasks\Framework\Data\MapEntity
+ * @uses    \DailyTasks\Framework\Data\StringableProperties
+ * @uses    \DailyTasks\Framework\Queue\Contract\QueueItem
+ * @uses    \DailyTasks\Framework\Queue\Entity\PheanstalkInstance
+ * @uses    \DailyTasks\Framework\Queue\Factory\Key\PheanstalkInstanceKeyFactory
+ * @uses    \DailyTasks\Framework\Queue\Key\PheanstalkInstanceKey
+ * @uses    \DailyTasks\Framework\Queue\Map\PheanstalkInstanceMap
+ * @uses    \DailyTasks\Framework\Queue\Options\PheanstalkQueueOptions
+ * @package DailyTasks\Framework\Queue
+ */
 class PheanstalkQueueImplementationTest extends TestCase
 {
     /**
@@ -38,9 +51,6 @@ class PheanstalkQueueImplementationTest extends TestCase
         $this->addToAssertionCount(1);
     }
 
-    /**
-     * @depends testPush
-     */
     public function testReceive()
     {
         $queueImplementation = new PheanstalkQueueImplementation(self::$options);

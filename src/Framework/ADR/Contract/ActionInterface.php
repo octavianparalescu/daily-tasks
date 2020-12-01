@@ -10,5 +10,7 @@ interface ActionInterface
 
     public function getVerb(): ?string;
 
-    public function getOriginalRequest();
+    public function getRequest();
+
+    public function getResponse();
 }

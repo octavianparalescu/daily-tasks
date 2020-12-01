@@ -53,7 +53,27 @@ class ConfigManager
         }
 
         // Create the config object on the fly
-        $object = $this->configContainerFactory->create($key, $this->defaultConfigurationPath, $this->envFilePath);
+        $object = $this->configContainerFactory->createDefaultConfig($key, $this->defaultConfigurationPath);
+        $this->configContainerMap->add($object);
+
+        return $object;
+    }
+
+    /**
+     * @param $key
+     *
+     * @return ConfigContainer|null
+     * @throws \DailyTasks\Framework\Data\Exception
+     * @throws Exception
+     */
+    public function getEnvDomainConfig($key): ?ConfigContainer
+    {
+        if ($existingItem = $this->configContainerMap->getByKey($key)) {
+            return $existingItem;
+        }
+
+        // Create the config object on the fly
+        $object = $this->configContainerFactory->createEnvConfig($key, $this->envFilePath);
         $this->configContainerMap->add($object);
 
         return $object;

@@ -8,8 +8,8 @@ use DailyTasks\Framework\ADR\Contract\RouteInterface;
 use DailyTasks\Framework\ADR\Contract\RouterInterface;
 use DailyTasks\Framework\ADR\Entity\HTTPRoute;
 use DailyTasks\Framework\ADR\Entity\ResolvedRoute;
-use DailyTasks\Framework\ADR\HTTPRouting\HTTPRouteMatcher;
 use DailyTasks\Framework\ADR\Map\RouteMap;
+use DailyTasks\Framework\ADR\RouteMatcher\HTTPRouteMatcher;
 use DailyTasks\Framework\Application\Medium;
 
 /**

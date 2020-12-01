@@ -6,9 +6,9 @@ namespace DailyTasks\Framework\ADR;
 
 use DailyTasks\Framework\ADR\Entity\CLIRoute;
 use DailyTasks\Framework\ADR\Entity\HTTPRoute;
-use DailyTasks\Framework\ADR\HTTPRouting\HTTPRouteMatcher;
 use DailyTasks\Framework\ADR\Key\HTTPRouteKey;
 use DailyTasks\Framework\ADR\Map\RouteMap;
+use DailyTasks\Framework\ADR\RouteMatcher\HTTPRouteMatcher;
 use DailyTasks\Framework\Application\Medium;
 use DailyTasks\Framework\Config\ConfigManager;
 use DailyTasks\Framework\DI\Contract\ServiceFactoryInterface;
@@ -57,9 +57,9 @@ class RouterFactory implements ServiceFactoryInterface
                                               ->get($medium . '_routes') ?? [];
                 if (!empty($routes)) {
                     if ($medium === Medium::IMPLEMENTATION_WEB) {
-                        $this->createRouteWeb($routes, $routesMap);
+                        $this->createRouteWeb($domain, $routes, $routesMap);
                     } elseif ($medium === Medium::IMPLEMENTATION_CLI) {
-                        $this->createRouteCLI($routes, $routesMap);
+                        $this->createRouteCLI($domain, $routes, $routesMap);
                     }
                 }
             }
@@ -69,19 +69,20 @@ class RouterFactory implements ServiceFactoryInterface
     }
 
     /**
+     * @param Domain   $domain
      * @param array    $routes
      * @param RouteMap $routesMap
      *
      * @throws \Exception
      */
-    private function createRouteWeb(array $routes, RouteMap $routesMap): void
+    private function createRouteWeb(Domain $domain, array $routes, RouteMap $routesMap): void
     {
         foreach ($routes as $path => $verbs) {
             $routesMap->addRange(
                 new RouteMap(
                     array_map(
                         fn($verb, $actionClass) => new HTTPRoute(
-                            new HTTPRouteKey($verb, $path), $actionClass
+                            new HTTPRouteKey($verb, $path), $actionClass, $domain
                         ),
                         array_keys($verbs),
                         $verbs
@@ -92,17 +93,18 @@ class RouterFactory implements ServiceFactoryInterface
     }
 
     /**
+     * @param Domain   $domain
      * @param array    $routes
      * @param RouteMap $routesMap
      *
      * @throws \DailyTasks\Framework\Data\Exception
      */
-    private function createRouteCLI(array $routes, RouteMap $routesMap): void
+    private function createRouteCLI(Domain $domain, array $routes, RouteMap $routesMap): void
     {
         foreach ($routes as $path => $actionClass) {
             $routesMap->add(
                 new CLIRoute(
-                    $path, $actionClass
+                    $path, $actionClass, $domain
                 )
             );
         }

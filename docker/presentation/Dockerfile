@@ -4,6 +4,8 @@ RUN yes | pecl install xdebug
 RUN docker-php-ext-enable xdebug
 RUN echo "xdebug.remote_enable=1" >> /usr/local/etc/php/php.ini
 
+RUN docker-php-ext-install mysqli pdo pdo_mysql
+RUN a2enmod rewrite
 RUN service apache2 restart
 
 ENV APACHE_DOCUMENT_ROOT /project/public

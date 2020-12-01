@@ -1,11 +1,12 @@
 <?php
 declare(strict_types=1);
 
-namespace DailyTasks\Framework\ADR;
+namespace DailyTasks\Framework\ADR\Action;
 
 
 use DailyTasks\Framework\ADR\Contract\ActionInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class HTTPAction implements ActionInterface
 {
@@ -13,10 +14,15 @@ class HTTPAction implements ActionInterface
      * @var Request
      */
     private Request $request;
+    /**
+     * @var Response
+     */
+    private Response $response;
 
-    public function __construct(Request $request)
+    public function __construct(Request $request, Response $response)
     {
         $this->request = $request;
+        $this->response = $response;
     }
 
     public function getPath(): string
@@ -27,14 +33,19 @@ class HTTPAction implements ActionInterface
     /**
      * @return Request
      */
-    public function getOriginalRequest()
+    public function getRequest()
     {
         return $this->request;
     }
 
     public function getVerb(): ?string
     {
-        return $this->getOriginalRequest()
+        return $this->getRequest()
                     ->getMethod();
+    }
+
+    public function getResponse()
+    {
+        return $this->response;
     }
 }

@@ -7,6 +7,12 @@ use DailyTasks\Framework\Config\Exception;
 use PHPUnit\Framework\TestCase;
 use Throwable;
 
+/**
+ * Class FolderToConfigurationConverterTest
+ * @covers  \DailyTasks\Framework\Config\Converter\FolderToConfigurationConverter
+ * @uses    \DailyTasks\Framework\Config\Converter\FileToConfigurationConverter
+ * @package DailyTasks\Framework\Config\Converter
+ */
 class FolderToConfigurationConverterTest extends TestCase
 {
     private const TEST_FOLDER = __DIR__ . '/folder_to_cfg_files' . DIRECTORY_SEPARATOR . 'test_folder';

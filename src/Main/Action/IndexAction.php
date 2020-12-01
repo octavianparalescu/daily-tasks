@@ -1,12 +1,12 @@
 <?php
 declare(strict_types=1);
 
-namespace DailyTasks\Main\Actions;
+namespace DailyTasks\Main\Action;
 
 
+use DailyTasks\Framework\ADR\Action\HTTPAction;
 use DailyTasks\Framework\ADR\Contract\ActionHandlerInterface;
 use DailyTasks\Framework\ADR\Contract\ActionInterface;
-use DailyTasks\Framework\ADR\HTTPAction;
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\Response;
 

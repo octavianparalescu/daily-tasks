@@ -30,22 +30,34 @@ class ConfigContainerFactory
     /**
      * @param DomainKey   $domainKey
      * @param string|null $defaultConfigFolderPath
-     * @param string|null $envFolder
      *
      * @return ConfigContainer
      * @throws Exception
      */
-    public function create(
+    public function createDefaultConfig(
         DomainKey $domainKey,
-        string $defaultConfigFolderPath,
-        string $envFolder
+        string $defaultConfigFolderPath
     ): ConfigContainer {
-        $configPath = $this->getDefaultConfigFIlePath($defaultConfigFolderPath, $domainKey);
+        $configPath = $this->getDefaultConfigFilePath($defaultConfigFolderPath, $domainKey);
         $defaultConfig = [];
         if (is_readable($configPath)) {
             $defaultConfig = $this->fileToConfigurationConverter->convertFromFile($configPath);
         }
 
+        return new ConfigContainer($domainKey, $defaultConfig);
+    }
+
+    /**
+     * @param DomainKey   $domainKey
+     * @param string|null $envFolder
+     *
+     * @return ConfigContainer
+     * @throws Exception
+     */
+    public function createEnvConfig(
+        DomainKey $domainKey,
+        string $envFolder
+    ): ConfigContainer {
         $envFile = $this->getEnvFileNameFormat($envFolder, $domainKey);
 
         // We only read the env file if it exists as it is not mandatory
@@ -54,7 +66,7 @@ class ConfigContainerFactory
             $envArray = $this->envConverter->convertFile($envFile);
         }
 
-        return new ConfigContainer($domainKey, $envArray, $defaultConfig);
+        return new ConfigContainer($domainKey, $envArray);
     }
 
     /**
@@ -74,7 +86,7 @@ class ConfigContainerFactory
      *
      * @return string
      */
-    private function getDefaultConfigFIlePath(?string $defaultConfigFolderPath, DomainKey $domainKey): string
+    private function getDefaultConfigFilePath(?string $defaultConfigFolderPath, DomainKey $domainKey): string
     {
         return $defaultConfigFolderPath . '/' . $domainKey->getConfigIdentifier() . '.php';
     }

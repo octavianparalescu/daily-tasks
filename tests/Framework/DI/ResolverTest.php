@@ -17,6 +17,8 @@ use Throwable;
 /**
  * Class ResolverTest
  * Can't use anonymous classes for testing as the DI Resolver relies on actual classes atm
+ * @covers  \DailyTasks\Framework\DI\Resolver
+ * @uses    \DailyTasks\Framework\DI\Container
  * @package DailyTasks\Framework\DI
  */
 class ResolverTest extends TestCase

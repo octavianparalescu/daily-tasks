@@ -11,17 +11,25 @@ use JsonSerializable;
 
 abstract class ListEntity implements Countable, IteratorAggregate, JsonSerializable
 {
-    private string $entitiesType;
     private array $data;
 
-    public function __construct($entitiesType, array $initialData = [])
+    public function __construct(array $initialData = [])
     {
-        $this->entitiesType = $entitiesType;
         $this->data = $initialData;
     }
 
+    /**
+     * Should return the class name of the to-be contained objects
+     * @return string
+     */
+    abstract public function getEntitiesType(): string;
+
     public function add(Immutable $entity)
     {
+        $entitiesType = $this->getEntitiesType();
+        if (!($entity instanceof $entitiesType)) {
+            throw new Exception('Tried to add ' . (get_class($entity)) . ' to map of type ' . $entitiesType);
+        }
         if (!$entity) {
             return;
         }

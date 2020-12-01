@@ -5,9 +5,22 @@ namespace DailyTasks\Framework\ADR\HTTPRouting;
 
 use DailyTasks\Framework\ADR\Entity\HTTPRoute;
 use DailyTasks\Framework\ADR\Key\HTTPRouteKey;
+use DailyTasks\Framework\ADR\RouteMatcher\HTTPRouteMatcher;
+use DailyTasks\Framework\Domain\Entity\Domain;
+use DailyTasks\Framework\Domain\Key\DomainKey;
 use DailyTasks\Framework\Http\Verbs;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * Class HTTPRouteMatcherTest
+ * @covers  \DailyTasks\Framework\ADR\RouteMatcher\HTTPRouteMatcher
+ * @uses    \DailyTasks\Framework\ADR\Entity\HTTPRoute
+ * @uses    \DailyTasks\Framework\ADR\Entity\ResolvedRoute
+ * @uses    \DailyTasks\Framework\ADR\Key\HTTPRouteKey
+ * @uses    \DailyTasks\Framework\Domain\Entity\Domain
+ * @uses    \DailyTasks\Framework\Domain\Key\DomainKey
+ * @package DailyTasks\Framework\ADR\HTTPRouting
+ */
 class HTTPRouteMatcherTest extends TestCase
 {
     public function testMatchSimpleRoute()
@@ -16,7 +29,7 @@ class HTTPRouteMatcherTest extends TestCase
         $routeString = '/test';
         $verb = Verbs::GET;
 
-        $route = new HTTPRoute(new HTTPRouteKey($verb, $routeString), 'class');
+        $route = new HTTPRoute(new HTTPRouteKey($verb, $routeString), 'class', new Domain(new DomainKey('test'), 'Test'));
         $this->assertIsObject($routeMatcher->match($route, $routeString, $verb));
     }
 
@@ -26,7 +39,7 @@ class HTTPRouteMatcherTest extends TestCase
         $routeString = '/test';
         $verb = Verbs::GET;
 
-        $route = new HTTPRoute(new HTTPRouteKey($verb, $routeString), 'class');
+        $route = new HTTPRoute(new HTTPRouteKey($verb, $routeString), 'class', new Domain(new DomainKey('test'), 'Test'));
         $this->assertNull($routeMatcher->match($route, '/something-else', $verb));
     }
 
@@ -36,7 +49,7 @@ class HTTPRouteMatcherTest extends TestCase
         $routeString = '/test';
         $verb = Verbs::GET;
 
-        $route = new HTTPRoute(new HTTPRouteKey($verb, $routeString), 'class');
+        $route = new HTTPRoute(new HTTPRouteKey($verb, $routeString), 'class', new Domain(new DomainKey('test'), 'Test'));
         $this->assertNull($routeMatcher->match($route, $routeString . '/another-level', $verb));
     }
 
@@ -46,7 +59,7 @@ class HTTPRouteMatcherTest extends TestCase
         $routeString = '/test/[param1]';
         $verb = Verbs::GET;
 
-        $route = new HTTPRoute(new HTTPRouteKey($verb, $routeString), 'class');
+        $route = new HTTPRoute(new HTTPRouteKey($verb, $routeString), 'class', new Domain(new DomainKey('test'), 'Test'));
         $resolvedRoute = $routeMatcher->match($route, '/test/test-param', $verb);
         $this->assertIsObject($resolvedRoute);
         $this->assertEquals(
@@ -62,7 +75,7 @@ class HTTPRouteMatcherTest extends TestCase
         $routeString = '/test/[param1]/[param2]';
         $verb = Verbs::GET;
 
-        $route = new HTTPRoute(new HTTPRouteKey($verb, $routeString), 'class');
+        $route = new HTTPRoute(new HTTPRouteKey($verb, $routeString), 'class', new Domain(new DomainKey('test'), 'Test'));
         $resolvedRoute = $routeMatcher->match($route, '/test/test-param/test-param2', $verb);
         $this->assertIsObject($resolvedRoute);
         $this->assertEquals(
@@ -83,7 +96,7 @@ class HTTPRouteMatcherTest extends TestCase
         $routeString = '/test/[param1]/test2/[param2]';
         $verb = Verbs::GET;
 
-        $route = new HTTPRoute(new HTTPRouteKey($verb, $routeString), 'class');
+        $route = new HTTPRoute(new HTTPRouteKey($verb, $routeString), 'class', new Domain(new DomainKey('test'), 'Test'));
         $resolvedRoute = $routeMatcher->match($route, '/test/test-param/test2/test-param3', $verb);
         $this->assertIsObject($resolvedRoute);
         $this->assertEquals(

@@ -3,9 +3,11 @@ declare(strict_types=1);
 
 namespace DailyTasks\Framework\Data;
 
-use DailyTasks\Framework\Data\Traits\StringableProperties;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @covers \DailyTasks\Framework\Data\StringableProperties
+ */
 class StringablePropertiesTest extends TestCase
 {
     public function testStringableProperties()

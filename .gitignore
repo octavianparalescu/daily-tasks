@@ -1,6 +1,7 @@
 vendor
 data/composer-cache-dir
-data/test_logs
+data/*_logs
 .idea
 .phpunit.result.cache
-.env
+*.env
+docker/data

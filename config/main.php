@@ -1,10 +1,10 @@
 <?php
 declare(strict_types=1);
 
+use DailyTasks\Framework\ADR\Action\HTTPActionFactory;
 use DailyTasks\Framework\ADR\Contract\ActionFactoryInterface;
-use DailyTasks\Framework\ADR\HTTPActionFactory;
 use DailyTasks\Framework\Http\Verbs;
-use DailyTasks\Main\Actions\IndexAction;
+use DailyTasks\Main\Action\IndexAction;
 
 return [
     'di_static' => [

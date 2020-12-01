@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace DailyTasks\Framework\Application;
 
 
-use DailyTasks\Framework\ADR\HTTPActionFactory;
+use DailyTasks\Framework\ADR\Action\HTTPActionFactory;
 use DailyTasks\Framework\DI\Resolver;
 use DailyTasks\Framework\Exception;
 
@@ -45,6 +45,7 @@ class ActionController
     {
         switch ($this->medium->getMedium()) {
             case Medium::IMPLEMENTATION_WEB:
+                /** @var HTTPActionFactory $factory */
                 $factory = $this->di->resolve(HTTPActionFactory::class);
             break;
             // todo: add CLI action factory

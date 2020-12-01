@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace DailyTasks\Framework\Data\Traits;
+namespace DailyTasks\Framework\Data;
 
 
 trait StringableProperties

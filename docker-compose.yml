@@ -18,7 +18,7 @@ services:
     working_dir: /project
     entrypoint: vendor/bin/phpunit
     restart: never
-  presentation_dev:
+  task_http_dev:
     build:
       context: ./docker/presentation
       args:
@@ -32,6 +32,17 @@ services:
     restart: always
     environment:
       XDEBUG_CONFIG: remote_host=host.docker.internal
+      ENV: dev
+  task_db_dev:
+    env_file:
+      - ./.task.env
+    image: mariadb:latest
+    volumes:
+      - ./docker/data/mariadbdata:/var/lib/mysql
+      - ./docker/db_dev:/docker-entrypoint-initdb.d
+    ports:
+      - "3307:3306"
+    restart: on-failure
   swagger-editor:
     image: swaggerapi/swagger-editor:latest
     ports:
@@ -48,3 +59,5 @@ services:
       - ./swagger/openapi.json:/openapi.json
     environment:
       SWAGGER_JSON: /openapi.json
+    links:
+      - task_http_dev

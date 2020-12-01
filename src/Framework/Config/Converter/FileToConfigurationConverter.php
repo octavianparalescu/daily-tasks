@@ -21,6 +21,7 @@ class FileToConfigurationConverter
                 "Default config file is not accessible: $filePath."
             );
         }
+
         /** @noinspection PhpIncludeInspection */
         $fileConfigArray = include($filePath);
 

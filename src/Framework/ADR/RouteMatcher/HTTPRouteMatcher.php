@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace DailyTasks\Framework\ADR\HTTPRouting;
+namespace DailyTasks\Framework\ADR\RouteMatcher;
 
 
 use DailyTasks\Framework\ADR\Contract\RouteInterface;

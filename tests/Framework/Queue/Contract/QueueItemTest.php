@@ -5,6 +5,11 @@ namespace DailyTasks\Framework\Queue\Contract;
 
 use PHPUnit\Framework\TestCase;
 
+/**
+ * Class QueueItemTest
+ * @covers  \DailyTasks\Framework\Queue\Contract\QueueItem
+ * @package DailyTasks\Framework\Queue\Contract
+ */
 class QueueItemTest extends TestCase
 {
     public function testSerializationAndDeserialization()

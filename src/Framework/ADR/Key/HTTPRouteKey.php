@@ -5,7 +5,7 @@ namespace DailyTasks\Framework\ADR\Key;
 
 
 use DailyTasks\Framework\Data\ComposedKey;
-use DailyTasks\Framework\Data\Traits\StringableProperties;
+use DailyTasks\Framework\Data\StringableProperties;
 
 class HTTPRouteKey implements ComposedKey
 {
